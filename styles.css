@@ -1,0 +1,26 @@
+a{
+    color: inherit;
+}
+
+.game-heading{
+    margin: 150px 0;
+    text-align: center;
+    font-size: 150px;
+}
+
+.play-button{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 200px;
+    height: 200px;
+    border: none;
+    background-color: transparent;
+    border-radius: 20px;
+}
+
+.play-button:hover{
+    background-color: #6dd7fd;
+    transition: background-color 0.5s ease-in-out;
+}
