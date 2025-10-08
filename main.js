@@ -1,66 +1,29 @@
-const words = [
-  "apple",
-  "banana",
-  "watermelon",
-  "strawberry",
-  "pineapple",
-  "grapefruit",
-  "cherry",
-  "mango",
-  "blueberry",
-  "kiwi",
-  "computer",
-  "javascript",
-  "keyboard",
-  "monitor",
-  "internet",
-  "software",
-  "programming",
-  "developer",
-  "variable",
-  "function",
-  "mountain",
-  "ocean",
-  "island",
-  "volcano",
-  "desert",
-  "forest",
-  "rainbow",
-  "storm",
-  "galaxy",
-  "planet",
-  "elephant",
-  "giraffe",
-  "kangaroo",
-  "tiger",
-  "dolphin",
-  "penguin",
-  "rabbit",
-  "squirrel",
-  "butterfly",
-  "dragon",
-  "mystery",
-  "adventure",
-  "puzzle",
-  "treasure",
-  "journey",
-  "fantasy",
-  "castle",
-  "wizard",
-  "robot",
-  "spaceship",
-];
-let livesCount = 6;
-const wordToGuess = "cherry";
-const lettersArr = wordToGuess.split("");
-const wrongLetters = [];
-
 const livesArea = document.querySelector(".lives-area");
 const guessLettersArea = document.querySelector(".guess-letters-area");
 const hangmanArea = document.querySelector(".hangman-area");
 const wrongLettersArea = document.querySelector(".wrong-area");
 
-function getHearts() {
+const modalLose = document.querySelector("[data-status=lost]");
+const modalWin = document.querySelector("[data-status=won]");
+const lostRestartBtn = document.querySelector("[data-name=lostRestartBtn]");
+const wonRestartBtn = document.querySelector("[data-name=wonRestartBtn]");
+
+function randomWord(wordsArr) {
+  return wordsArr[Math.floor(Math.random() * wordsArr.length)];
+}
+
+function makeUnderlines(letters) {
+  guessLettersArea.innerHTML = "";
+  const guessLettersMarkup = letters
+    .map(
+      (letter) => `<span data-letter="${letter}" class="underline">___</span>`
+    )
+    .join("");
+
+  guessLettersArea.insertAdjacentHTML("beforeend", guessLettersMarkup);
+}
+
+function getHearts(hearts) {
   livesArea.innerHTML = "";
   const livesMarkup = `<span>
     <svg
@@ -82,27 +45,16 @@ function getHearts() {
   </svg>
   </span>`;
 
-  for (let i = 0; i < livesCount; i++) {
+  for (let i = 0; i < hearts; i++) {
     livesArea.insertAdjacentHTML("beforeend", livesMarkup);
   }
 }
 
-function makeUnderlines() {
-  guessLettersArea.innerHTML = "";
-  const guessLettersMarkup = lettersArr
-    .map(
-      (letter) => `<span data-letter="${letter}" class="underline">___</span>`
-    )
-    .join("");
-
-  guessLettersArea.insertAdjacentHTML("beforeend", guessLettersMarkup);
-}
-
-function getWrongLetters() {
+function getWrongLetters(wrongLettersArr) {
   wrongLettersArea.innerHTML = "";
 
-  for (let i = 0; i < wrongLetters.length; i++) {
-    const element = wrongLetters[i];
+  for (let i = 0; i < wrongLettersArr.length; i++) {
+    const element = wrongLettersArr[i];
 
     wrongLettersArea.insertAdjacentHTML(
       "beforeend",
@@ -110,26 +62,118 @@ function getWrongLetters() {
     );
   }
 
-  console.log(wrongLetters);
+  console.log(wrongLettersArr);
 }
 
-document.onkeydown = (e) => {
-  for (const letter of lettersArr) {
-    if (e.key === letter) {
-      document
-        .querySelectorAll(`[data-letter="${letter}"]`)
-        .forEach((element) => (element.textContent = letter.toUpperCase()));
+function startGame() {
+  const words = [
+    "apple",
+    "banana",
+    "watermelon",
+    "strawberry",
+    "pineapple",
+    "grapefruit",
+    "cherry",
+    "mango",
+    "blueberry",
+    "kiwi",
+    "computer",
+    "javascript",
+    "keyboard",
+    "monitor",
+    "internet",
+    "software",
+    "programming",
+    "developer",
+    "variable",
+    "function",
+    "mountain",
+    "ocean",
+    "island",
+    "volcano",
+    "desert",
+    "forest",
+    "rainbow",
+    "storm",
+    "galaxy",
+    "planet",
+    "elephant",
+    "giraffe",
+    "kangaroo",
+    "tiger",
+    "dolphin",
+    "penguin",
+    "rabbit",
+    "squirrel",
+    "butterfly",
+    "dragon",
+    "mystery",
+    "adventure",
+    "puzzle",
+    "treasure",
+    "journey",
+    "fantasy",
+    "castle",
+    "wizard",
+    "robot",
+    "spaceship",
+  ];
+  let livesCount = 6;
+  const wordToGuess = randomWord(words);
+  const lettersArr = wordToGuess.split("");
+  const wrongLetters = [];
+  let rightLetters = [];
+
+  makeUnderlines(lettersArr);
+  getHearts(livesCount);
+
+  document.onkeydown = (e) => {
+    if (livesCount !== 0) {
+      for (const letter of lettersArr) {
+        //   RIGHT LETTER AND IF YOU WON
+        if (e.key === letter) {
+          document
+            .querySelectorAll(`[data-letter="${letter}"]`)
+            .forEach((element) => (element.textContent = letter.toUpperCase()));
+
+          rightLetters = [...guessLettersArea.childNodes];
+          // THE MODAL WINDOW IS SHOWED UP, BUT I STILL CAN PRESS THE KEY BUTTONS
+          if (rightLetters.every((el) => el.textContent !== "___")) {
+            modalWin.classList.remove("hidden");
+            document.onkeydown = null;
+            //   MAYBE REMOVE EVENT LISTENER?
+          }
+          return;
+        }
+      }
+
+      //   WRONG LETTER AND -1 HEART
+      if (!wrongLetters.includes(e.key)) {
+        wrongLetters.push(e.key);
+        getWrongLetters(wrongLetters);
+        livesCount--;
+        getHearts(livesCount);
+      }
+    } else {
+      // LOST
+      modalLose.classList.remove("hidden");
       return;
     }
-  }
+  };
 
-  if (!wrongLetters.includes(e.key)) {
-    wrongLetters.push(e.key);
-    getWrongLetters();
-    livesCount--;
-    getHearts();
-  }
-};
+  //   RESTART
+  lostRestartBtn.onclick = () => {
+    startGame();
+    wrongLettersArea.innerHTML = "";
+    modalLose.classList.add("hidden");
+    modalWin.classList.add("hidden");
+  };
+  wonRestartBtn.onclick = () => {
+    startGame();
+    wrongLettersArea.innerHTML = "";
+    modalLose.classList.add("hidden");
+    modalWin.classList.add("hidden");
+  };
+}
 
-makeUnderlines();
-getHearts(livesCount);
+startGame();
