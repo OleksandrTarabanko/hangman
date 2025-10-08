@@ -1,8 +1,10 @@
 const livesArea = document.querySelector(".lives-area");
 const guessLettersArea = document.querySelector(".guess-letters-area");
 const hangmanArea = document.querySelector(".hangman-area");
+const hangmanImage = document.querySelector("[data-name=hangmanImage]");
 const wrongLettersArea = document.querySelector(".wrong-area");
 
+const modalBackdrop = document.querySelector(".modalBackdrop");
 const modalLose = document.querySelector("[data-status=lost]");
 const modalWin = document.querySelector("[data-status=won]");
 const lostRestartBtn = document.querySelector("[data-name=lostRestartBtn]");
@@ -65,6 +67,15 @@ function getWrongLetters(wrongLettersArr) {
   console.log(wrongLettersArr);
 }
 
+function clean() {
+  hangmanArea.textContent = "";
+  hangmanImage.setAttribute("src", "");
+  wrongLettersArea.innerHTML = "";
+  modalBackdrop.classList.add("hidden");
+  modalLose.classList.add("hidden");
+  modalWin.classList.add("hidden");
+}
+
 function startGame() {
   const words = [
     "apple",
@@ -118,7 +129,7 @@ function startGame() {
     "robot",
     "spaceship",
   ];
-  let livesCount = 6;
+  let livesCount = 8;
   const wordToGuess = randomWord(words);
   const lettersArr = wordToGuess.split("");
   const wrongLetters = [];
@@ -128,9 +139,9 @@ function startGame() {
   getHearts(livesCount);
 
   document.onkeydown = (e) => {
-    if (livesCount !== 0) {
+    if (livesCount > 0) {
       for (const letter of lettersArr) {
-        //   RIGHT LETTER AND IF YOU WON
+        //   RIGHT LETTER AND MODAL IF YOU WON
         if (e.key === letter) {
           document
             .querySelectorAll(`[data-letter="${letter}"]`)
@@ -139,6 +150,7 @@ function startGame() {
           rightLetters = [...guessLettersArea.childNodes];
           // THE MODAL WINDOW IS SHOWED UP, BUT I STILL CAN PRESS THE KEY BUTTONS
           if (rightLetters.every((el) => el.textContent !== "___")) {
+            modalBackdrop.classList.remove("hidden");
             modalWin.classList.remove("hidden");
             document.onkeydown = null;
             //   MAYBE REMOVE EVENT LISTENER?
@@ -154,8 +166,49 @@ function startGame() {
         livesCount--;
         getHearts(livesCount);
       }
+
+      switch (livesCount) {
+        case 7:
+          hangmanArea.textContent = "JavaScript";
+          hangmanImage.setAttribute("src", "./images/1.png");
+          break;
+        case 6:
+          hangmanArea.textContent = "JavaScript is";
+          hangmanImage.setAttribute("src", "./images/2.png");
+          break;
+        case 5:
+          hangmanArea.textContent = "JavaScript is my";
+          hangmanImage.setAttribute("src", "./images/3.png");
+          break;
+        case 4:
+          hangmanArea.textContent = "JavaScript is my and";
+          hangmanImage.setAttribute("src", "./images/4.png");
+          break;
+        case 3:
+          hangmanArea.textContent = "JavaScript is my and Danli";
+          hangmanImage.setAttribute("src", "./images/5.png");
+          break;
+        case 2:
+          hangmanArea.textContent = "JavaScript is my and Danli favoutite";
+          hangmanImage.setAttribute("src", "./images/6.png");
+          break;
+        case 1:
+          hangmanArea.textContent =
+            "JavaScript is my and Danli favoutite programming";
+          hangmanImage.setAttribute("src", "./images/7.png");
+          break;
+        case 0:
+          hangmanArea.textContent =
+            "JavaScript is my and Danli favoutite programming launguage";
+          hangmanImage.setAttribute("src", "./images/8.png");
+          break;
+        default:
+          hangmanArea.textContent = "";
+          break;
+      }
     } else {
       // LOST
+      modalBackdrop.classList.remove("hidden");
       modalLose.classList.remove("hidden");
       return;
     }
@@ -163,16 +216,12 @@ function startGame() {
 
   //   RESTART
   lostRestartBtn.onclick = () => {
+    clean();
     startGame();
-    wrongLettersArea.innerHTML = "";
-    modalLose.classList.add("hidden");
-    modalWin.classList.add("hidden");
   };
   wonRestartBtn.onclick = () => {
+    clean();
     startGame();
-    wrongLettersArea.innerHTML = "";
-    modalLose.classList.add("hidden");
-    modalWin.classList.add("hidden");
   };
 }
 

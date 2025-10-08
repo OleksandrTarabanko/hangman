@@ -49,6 +49,9 @@ a{
     font-size: 36px;
 }
 
+.hangman-area{
+    font-size: 36px;
+}
 
 .modal{
     position: absolute;
@@ -82,4 +85,13 @@ a{
 .modal button:hover{
     background-color: #6dd7fd;
     transition: background-color 0.5s ease-in-out;
+}
+
+.modalBackdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
 }
