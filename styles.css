@@ -53,6 +53,15 @@ a{
     font-size: 36px;
 }
 
+.wrong-area{
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.wrong-area-paragraph{
+    font-size: 22px;
+}
+
 .modal{
     position: absolute;
     top: 50%;

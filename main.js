@@ -67,6 +67,48 @@ function getWrongLetters(wrongLettersArr) {
   console.log(wrongLettersArr);
 }
 
+function makeHangmanImage(hearts) {
+  switch (hearts) {
+    case 7:
+      hangmanArea.textContent = "JavaScript";
+      hangmanImage.setAttribute("src", "./images/1.png");
+      break;
+    case 6:
+      hangmanArea.textContent = "JavaScript is";
+      hangmanImage.setAttribute("src", "./images/2.png");
+      break;
+    case 5:
+      hangmanArea.textContent = "JavaScript is my";
+      hangmanImage.setAttribute("src", "./images/3.png");
+      break;
+    case 4:
+      hangmanArea.textContent = "JavaScript is my and";
+      hangmanImage.setAttribute("src", "./images/4.png");
+      break;
+    case 3:
+      hangmanArea.textContent = "JavaScript is my and Danli";
+      hangmanImage.setAttribute("src", "./images/5.png");
+      break;
+    case 2:
+      hangmanArea.textContent = "JavaScript is my and Danli favoutite";
+      hangmanImage.setAttribute("src", "./images/6.png");
+      break;
+    case 1:
+      hangmanArea.textContent =
+        "JavaScript is my and Danli favoutite programming";
+      hangmanImage.setAttribute("src", "./images/7.png");
+      break;
+    case 0:
+      hangmanArea.textContent =
+        "JavaScript is my and Danli favoutite programming launguage";
+      hangmanImage.setAttribute("src", "./images/8.png");
+      break;
+    default:
+      hangmanArea.textContent = "";
+      break;
+  }
+}
+
 function clean() {
   hangmanArea.textContent = "";
   hangmanImage.setAttribute("src", "");
@@ -167,45 +209,7 @@ function startGame() {
         getHearts(livesCount);
       }
 
-      switch (livesCount) {
-        case 7:
-          hangmanArea.textContent = "JavaScript";
-          hangmanImage.setAttribute("src", "./images/1.png");
-          break;
-        case 6:
-          hangmanArea.textContent = "JavaScript is";
-          hangmanImage.setAttribute("src", "./images/2.png");
-          break;
-        case 5:
-          hangmanArea.textContent = "JavaScript is my";
-          hangmanImage.setAttribute("src", "./images/3.png");
-          break;
-        case 4:
-          hangmanArea.textContent = "JavaScript is my and";
-          hangmanImage.setAttribute("src", "./images/4.png");
-          break;
-        case 3:
-          hangmanArea.textContent = "JavaScript is my and Danli";
-          hangmanImage.setAttribute("src", "./images/5.png");
-          break;
-        case 2:
-          hangmanArea.textContent = "JavaScript is my and Danli favoutite";
-          hangmanImage.setAttribute("src", "./images/6.png");
-          break;
-        case 1:
-          hangmanArea.textContent =
-            "JavaScript is my and Danli favoutite programming";
-          hangmanImage.setAttribute("src", "./images/7.png");
-          break;
-        case 0:
-          hangmanArea.textContent =
-            "JavaScript is my and Danli favoutite programming launguage";
-          hangmanImage.setAttribute("src", "./images/8.png");
-          break;
-        default:
-          hangmanArea.textContent = "";
-          break;
-      }
+      makeHangmanImage(livesCount);
     } else {
       // LOST
       modalBackdrop.classList.remove("hidden");
