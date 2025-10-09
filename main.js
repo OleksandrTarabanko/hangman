@@ -50,12 +50,41 @@ const words = [
   "robot",
   "spaceship",
 ];
+const alphabet = [
+  "a",
+  "b",
+  "c",
+  "d",
+  "e",
+  "f",
+  "g",
+  "h",
+  "i",
+  "j",
+  "k",
+  "l",
+  "m",
+  "n",
+  "o",
+  "p",
+  "q",
+  "r",
+  "s",
+  "t",
+  "u",
+  "v",
+  "w",
+  "x",
+  "y",
+  "z",
+];
 
 const livesArea = document.querySelector(".lives-area");
 const guessLettersArea = document.querySelector(".guess-letters-area");
 const hangmanArea = document.querySelector(".hangman-area");
 const hangmanImage = document.querySelector("[data-name=hangmanImage]");
 const wrongLettersArea = document.querySelector(".wrong-area");
+const keyboardArea = document.querySelector(".keyboardArea");
 
 const modalBackdrop = document.querySelector(".modalBackdrop");
 const modalLose = document.querySelector("[data-status=lost]");
@@ -160,71 +189,95 @@ function makeHangmanImage(hearts) {
   }
 }
 
-function clean() {
+function handleKey(key) {
+  if (livesCount > 0) {
+    for (const letter of wordToGuessLetters) {
+      //   RIGHT LETTER AND MODAL IF YOU WON
+      if (key === letter) {
+        document
+          .querySelectorAll(`[data-letter="${letter}"]`)
+          .forEach((element) => (element.textContent = letter.toUpperCase()));
+
+        rightLetters = [...guessLettersArea.childNodes];
+
+        if (rightLetters.every((el) => el.textContent !== "___")) {
+          modalBackdrop.classList.remove("hidden");
+          modalWin.classList.remove("hidden");
+          document.onkeydown = null;
+        }
+        return;
+      }
+    }
+
+    //   WRONG LETTER AND -1 HEART
+    if (!wrongLetters.includes(key)) {
+      wrongLetters.push(key);
+      getWrongLetters(wrongLetters);
+      livesCount--;
+      showHearts(livesCount);
+    }
+
+    makeHangmanImage(livesCount);
+  } else {
+    // LOST
+    modalBackdrop.classList.remove("hidden");
+    modalLose.classList.remove("hidden");
+    return;
+  }
+}
+
+function makeKeyboard() {
+  for (let i = 0; i < alphabet.length; i++) {
+    const virtualLetter = document.createElement("button");
+    virtualLetter.textContent = alphabet[i].toUpperCase();
+
+    virtualLetter.addEventListener("click", (event) => {
+      handleKey(event.target.textContent.toLowerCase());
+    });
+
+    keyboardArea.appendChild(virtualLetter);
+  }
+}
+
+function reset() {
+  livesCount = 8;
+  wordToGuess = randomWord(words);
+  wordToGuessLetters = wordToGuess.split("");
+  wrongLetters = [];
+  rightLetters = [];
   hangmanArea.textContent = "";
   hangmanImage.setAttribute("src", "");
   wrongLettersArea.innerHTML = "";
   modalBackdrop.classList.add("hidden");
   modalLose.classList.add("hidden");
   modalWin.classList.add("hidden");
-}
-
-function startGame() {
-  let livesCount = 8;
-  const wordToGuess = randomWord(words);
-  const wordToGuessLetters = wordToGuess.split("");
-  const wrongLetters = [];
-  let rightLetters = [];
 
   makeUnderlines(wordToGuessLetters);
   showHearts(livesCount);
 
   document.onkeydown = (e) => {
-    if (livesCount > 0) {
-      for (const letter of wordToGuessLetters) {
-        //   RIGHT LETTER AND MODAL IF YOU WON
-        if (e.key === letter) {
-          document
-            .querySelectorAll(`[data-letter="${letter}"]`)
-            .forEach((element) => (element.textContent = letter.toUpperCase()));
-
-          rightLetters = [...guessLettersArea.childNodes];
-
-          if (rightLetters.every((el) => el.textContent !== "___")) {
-            modalBackdrop.classList.remove("hidden");
-            modalWin.classList.remove("hidden");
-            document.onkeydown = null;
-          }
-          return;
-        }
-      }
-
-      //   WRONG LETTER AND -1 HEART
-      if (!wrongLetters.includes(e.key)) {
-        wrongLetters.push(e.key);
-        getWrongLetters(wrongLetters);
-        livesCount--;
-        showHearts(livesCount);
-      }
-
-      makeHangmanImage(livesCount);
-    } else {
-      // LOST
-      modalBackdrop.classList.remove("hidden");
-      modalLose.classList.remove("hidden");
-      return;
-    }
-  };
-
-  //   RESTART
-  lostRestartBtn.onclick = () => {
-    clean();
-    startGame();
-  };
-  wonRestartBtn.onclick = () => {
-    clean();
-    startGame();
+    handleKey(e.key);
   };
 }
 
-startGame();
+let livesCount = 8;
+let wordToGuess = randomWord(words);
+let wordToGuessLetters = wordToGuess.split("");
+let wrongLetters = [];
+let rightLetters = [];
+
+makeKeyboard();
+makeUnderlines(wordToGuessLetters);
+showHearts(livesCount);
+
+document.onkeydown = (e) => {
+  handleKey(e.key);
+};
+
+//   RESTART
+lostRestartBtn.onclick = () => {
+  reset();
+};
+wonRestartBtn.onclick = () => {
+  reset();
+};
