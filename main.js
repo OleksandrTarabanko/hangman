@@ -1,3 +1,56 @@
+const words = [
+  "apple",
+  "banana",
+  "watermelon",
+  "strawberry",
+  "pineapple",
+  "grapefruit",
+  "cherry",
+  "mango",
+  "blueberry",
+  "kiwi",
+  "computer",
+  "javascript",
+  "keyboard",
+  "monitor",
+  "internet",
+  "software",
+  "programming",
+  "developer",
+  "variable",
+  "function",
+  "mountain",
+  "ocean",
+  "island",
+  "volcano",
+  "desert",
+  "forest",
+  "rainbow",
+  "storm",
+  "galaxy",
+  "planet",
+  "elephant",
+  "giraffe",
+  "kangaroo",
+  "tiger",
+  "dolphin",
+  "penguin",
+  "rabbit",
+  "squirrel",
+  "butterfly",
+  "dragon",
+  "mystery",
+  "adventure",
+  "puzzle",
+  "treasure",
+  "journey",
+  "fantasy",
+  "castle",
+  "wizard",
+  "robot",
+  "spaceship",
+];
+
 const livesArea = document.querySelector(".lives-area");
 const guessLettersArea = document.querySelector(".guess-letters-area");
 const hangmanArea = document.querySelector(".hangman-area");
@@ -15,17 +68,15 @@ function randomWord(wordsArr) {
 }
 
 function makeUnderlines(letters) {
-  guessLettersArea.innerHTML = "";
   const guessLettersMarkup = letters
     .map(
       (letter) => `<span data-letter="${letter}" class="underline">___</span>`
     )
     .join("");
-
-  guessLettersArea.insertAdjacentHTML("beforeend", guessLettersMarkup);
+  guessLettersArea.innerHTML = guessLettersMarkup;
 }
 
-function getHearts(hearts) {
+function showHearts(hearts) {
   livesArea.innerHTML = "";
   const livesMarkup = `<span>
     <svg
@@ -119,70 +170,18 @@ function clean() {
 }
 
 function startGame() {
-  const words = [
-    "apple",
-    "banana",
-    "watermelon",
-    "strawberry",
-    "pineapple",
-    "grapefruit",
-    "cherry",
-    "mango",
-    "blueberry",
-    "kiwi",
-    "computer",
-    "javascript",
-    "keyboard",
-    "monitor",
-    "internet",
-    "software",
-    "programming",
-    "developer",
-    "variable",
-    "function",
-    "mountain",
-    "ocean",
-    "island",
-    "volcano",
-    "desert",
-    "forest",
-    "rainbow",
-    "storm",
-    "galaxy",
-    "planet",
-    "elephant",
-    "giraffe",
-    "kangaroo",
-    "tiger",
-    "dolphin",
-    "penguin",
-    "rabbit",
-    "squirrel",
-    "butterfly",
-    "dragon",
-    "mystery",
-    "adventure",
-    "puzzle",
-    "treasure",
-    "journey",
-    "fantasy",
-    "castle",
-    "wizard",
-    "robot",
-    "spaceship",
-  ];
   let livesCount = 8;
   const wordToGuess = randomWord(words);
-  const lettersArr = wordToGuess.split("");
+  const wordToGuessLetters = wordToGuess.split("");
   const wrongLetters = [];
   let rightLetters = [];
 
-  makeUnderlines(lettersArr);
-  getHearts(livesCount);
+  makeUnderlines(wordToGuessLetters);
+  showHearts(livesCount);
 
   document.onkeydown = (e) => {
     if (livesCount > 0) {
-      for (const letter of lettersArr) {
+      for (const letter of wordToGuessLetters) {
         //   RIGHT LETTER AND MODAL IF YOU WON
         if (e.key === letter) {
           document
@@ -190,12 +189,11 @@ function startGame() {
             .forEach((element) => (element.textContent = letter.toUpperCase()));
 
           rightLetters = [...guessLettersArea.childNodes];
-          // THE MODAL WINDOW IS SHOWED UP, BUT I STILL CAN PRESS THE KEY BUTTONS
+
           if (rightLetters.every((el) => el.textContent !== "___")) {
             modalBackdrop.classList.remove("hidden");
             modalWin.classList.remove("hidden");
             document.onkeydown = null;
-            //   MAYBE REMOVE EVENT LISTENER?
           }
           return;
         }
@@ -206,7 +204,7 @@ function startGame() {
         wrongLetters.push(e.key);
         getWrongLetters(wrongLetters);
         livesCount--;
-        getHearts(livesCount);
+        showHearts(livesCount);
       }
 
       makeHangmanImage(livesCount);
