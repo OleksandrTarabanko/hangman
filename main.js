@@ -101,7 +101,7 @@ function showHearts(hearts) {
   livesArea.innerHTML = livesMarkup.repeat(hearts);
 }
 
-function makeHangmanImage(hearts) {
+function showHangmanImage(hearts) {
   const expression =
     "JavaScript is my and Danli favoutite programming launguage".split(" ");
 
@@ -109,7 +109,7 @@ function makeHangmanImage(hearts) {
   hangmanImage.setAttribute("src", `./images/${8 - hearts}.png`);
 }
 
-function getWrongLetters(wrongLettersArr) {
+function showWrongLetters(wrongLettersArr) {
   wrongLettersArea.innerHTML = wrongLettersArr
     .map((letter) => `<span>${letter.toUpperCase()}</span>`)
     .join("");
@@ -154,12 +154,12 @@ function handleKey(key) {
     //   WRONG LETTER AND -1 HEART
     if (!wrongLetters.includes(key)) {
       wrongLetters.push(key);
-      getWrongLetters(wrongLetters);
+      showWrongLetters(wrongLetters);
       livesCount--;
       showHearts(livesCount);
     }
 
-    makeHangmanImage(livesCount);
+    showHangmanImage(livesCount);
 
     // LOST MODAL
     if (livesCount === 0) {
@@ -176,9 +176,11 @@ function reset() {
   wordToGuessLetters = wordToGuess.split("");
   wrongLetters = [];
   rightLetters = [];
+
   hangmanArea.textContent = "";
   hangmanImage.setAttribute("src", "");
   wrongLettersArea.innerHTML = "";
+
   modalBackdrop.classList.add("hidden");
   modalLose.classList.add("hidden");
   modalWin.classList.add("hidden");
