@@ -50,34 +50,26 @@ const words = [
   "robot",
   "spaceship",
 ];
-const alphabet = [
-  "a",
-  "b",
-  "c",
-  "d",
-  "e",
-  "f",
-  "g",
-  "h",
-  "i",
-  "j",
-  "k",
-  "l",
-  "m",
-  "n",
-  "o",
-  "p",
-  "q",
-  "r",
-  "s",
-  "t",
-  "u",
-  "v",
-  "w",
-  "x",
-  "y",
-  "z",
-];
+const alphabet = "abcdefghijklmnopqrstuvwxyz";
+const livesMarkup = `<span>
+    <svg
+    width="50px"
+    height="50px"
+    viewBox="0 0 24 24"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns="http://www.w3.org/2000/svg"
+    version="1.1"
+    xmlns:cc="http://creativecommons.org/ns#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+  >
+    <g transform="translate(0 -1028.4)">
+      <path
+        d="m7 1031.4c-1.5355 0-3.0784 0.5-4.25 1.7-2.3431 2.4-2.2788 6.1 0 8.5l9.25 9.8 9.25-9.8c2.279-2.4 2.343-6.1 0-8.5-2.343-2.3-6.157-2.3-8.5 0l-0.75 0.8-0.75-0.8c-1.172-1.2-2.7145-1.7-4.25-1.7z"
+        fill="#e74c3c"
+      />
+    </g>
+  </svg>
+  </span>`;
 
 const livesArea = document.querySelector(".lives-area");
 const guessLettersArea = document.querySelector(".guess-letters-area");
@@ -106,94 +98,30 @@ function makeUnderlines(letters) {
 }
 
 function showHearts(hearts) {
-  livesArea.innerHTML = "";
-  const livesMarkup = `<span>
-    <svg
-    width="50px"
-    height="50px"
-    viewBox="0 0 24 24"
-    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns="http://www.w3.org/2000/svg"
-    version="1.1"
-    xmlns:cc="http://creativecommons.org/ns#"
-    xmlns:dc="http://purl.org/dc/elements/1.1/"
-  >
-    <g transform="translate(0 -1028.4)">
-      <path
-        d="m7 1031.4c-1.5355 0-3.0784 0.5-4.25 1.7-2.3431 2.4-2.2788 6.1 0 8.5l9.25 9.8 9.25-9.8c2.279-2.4 2.343-6.1 0-8.5-2.343-2.3-6.157-2.3-8.5 0l-0.75 0.8-0.75-0.8c-1.172-1.2-2.7145-1.7-4.25-1.7z"
-        fill="#e74c3c"
-      />
-    </g>
-  </svg>
-  </span>`;
-
-  for (let i = 0; i < hearts; i++) {
-    livesArea.insertAdjacentHTML("beforeend", livesMarkup);
-  }
+  livesArea.innerHTML = livesMarkup.repeat(hearts);
 }
 
 function makeHangmanImage(hearts) {
-  switch (hearts) {
-    case 7:
-      hangmanArea.textContent = "JavaScript";
-      hangmanImage.setAttribute("src", "./images/1.png");
-      break;
-    case 6:
-      hangmanArea.textContent = "JavaScript is";
-      hangmanImage.setAttribute("src", "./images/2.png");
-      break;
-    case 5:
-      hangmanArea.textContent = "JavaScript is my";
-      hangmanImage.setAttribute("src", "./images/3.png");
-      break;
-    case 4:
-      hangmanArea.textContent = "JavaScript is my and";
-      hangmanImage.setAttribute("src", "./images/4.png");
-      break;
-    case 3:
-      hangmanArea.textContent = "JavaScript is my and Danli";
-      hangmanImage.setAttribute("src", "./images/5.png");
-      break;
-    case 2:
-      hangmanArea.textContent = "JavaScript is my and Danli favoutite";
-      hangmanImage.setAttribute("src", "./images/6.png");
-      break;
-    case 1:
-      hangmanArea.textContent =
-        "JavaScript is my and Danli favoutite programming";
-      hangmanImage.setAttribute("src", "./images/7.png");
-      break;
-    case 0:
-      hangmanArea.textContent =
-        "JavaScript is my and Danli favoutite programming launguage";
-      hangmanImage.setAttribute("src", "./images/8.png");
-      break;
-    default:
-      hangmanArea.textContent = "";
-      break;
-  }
+  const expression =
+    "JavaScript is my and Danli favoutite programming launguage".split(" ");
+
+  hangmanArea.textContent = expression.slice(0, 8 - hearts).join(" ");
+  hangmanImage.setAttribute("src", `./images/${8 - hearts}.png`);
 }
 
 function getWrongLetters(wrongLettersArr) {
-  wrongLettersArea.innerHTML = "";
-
-  for (let i = 0; i < wrongLettersArr.length; i++) {
-    const element = wrongLettersArr[i];
-
-    wrongLettersArea.insertAdjacentHTML(
-      "beforeend",
-      `<span>${element.toUpperCase()}</span>`
-    );
-  }
+  wrongLettersArea.innerHTML = wrongLettersArr
+    .map((letter) => `<span>${letter.toUpperCase()}</span>`)
+    .join("");
 
   console.log(wrongLettersArr);
 }
 
 function makeKeyboard() {
-  for (let i = 0; i < alphabet.length; i++) {
+  for (const letter of alphabet) {
     const virtualLetter = document.createElement("button");
     virtualLetter.classList.add("virtual-letter");
-    virtualLetter.textContent = alphabet[i].toUpperCase();
+    virtualLetter.textContent = letter.toUpperCase();
 
     virtualLetter.addEventListener("click", (event) => {
       handleKey(event.target.textContent.toLowerCase());
@@ -206,7 +134,7 @@ function makeKeyboard() {
 function handleKey(key) {
   if (livesCount > 0) {
     for (const letter of wordToGuessLetters) {
-      //   RIGHT LETTER AND MODAL IF YOU WON
+      //   RIGHT LETTER AND WON MODAL
       if (key === letter) {
         document
           .querySelectorAll(`[data-letter="${letter}"]`)
@@ -233,6 +161,7 @@ function handleKey(key) {
 
     makeHangmanImage(livesCount);
 
+    // LOST MODAL
     if (livesCount === 0) {
       modalBackdrop.classList.remove("hidden");
       modalLose.classList.remove("hidden");
