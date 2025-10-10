@@ -132,21 +132,6 @@ function showHearts(hearts) {
   }
 }
 
-function getWrongLetters(wrongLettersArr) {
-  wrongLettersArea.innerHTML = "";
-
-  for (let i = 0; i < wrongLettersArr.length; i++) {
-    const element = wrongLettersArr[i];
-
-    wrongLettersArea.insertAdjacentHTML(
-      "beforeend",
-      `<span>${element.toUpperCase()}</span>`
-    );
-  }
-
-  console.log(wrongLettersArr);
-}
-
 function makeHangmanImage(hearts) {
   switch (hearts) {
     case 7:
@@ -189,6 +174,35 @@ function makeHangmanImage(hearts) {
   }
 }
 
+function getWrongLetters(wrongLettersArr) {
+  wrongLettersArea.innerHTML = "";
+
+  for (let i = 0; i < wrongLettersArr.length; i++) {
+    const element = wrongLettersArr[i];
+
+    wrongLettersArea.insertAdjacentHTML(
+      "beforeend",
+      `<span>${element.toUpperCase()}</span>`
+    );
+  }
+
+  console.log(wrongLettersArr);
+}
+
+function makeKeyboard() {
+  for (let i = 0; i < alphabet.length; i++) {
+    const virtualLetter = document.createElement("button");
+    virtualLetter.classList.add("virtual-letter");
+    virtualLetter.textContent = alphabet[i].toUpperCase();
+
+    virtualLetter.addEventListener("click", (event) => {
+      handleKey(event.target.textContent.toLowerCase());
+    });
+
+    keyboardArea.appendChild(virtualLetter);
+  }
+}
+
 function handleKey(key) {
   if (livesCount > 0) {
     for (const letter of wordToGuessLetters) {
@@ -218,24 +232,12 @@ function handleKey(key) {
     }
 
     makeHangmanImage(livesCount);
-  } else {
-    // LOST
-    modalBackdrop.classList.remove("hidden");
-    modalLose.classList.remove("hidden");
-    return;
-  }
-}
 
-function makeKeyboard() {
-  for (let i = 0; i < alphabet.length; i++) {
-    const virtualLetter = document.createElement("button");
-    virtualLetter.textContent = alphabet[i].toUpperCase();
-
-    virtualLetter.addEventListener("click", (event) => {
-      handleKey(event.target.textContent.toLowerCase());
-    });
-
-    keyboardArea.appendChild(virtualLetter);
+    if (livesCount === 0) {
+      modalBackdrop.classList.remove("hidden");
+      modalLose.classList.remove("hidden");
+      return;
+    }
   }
 }
 

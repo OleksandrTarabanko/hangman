@@ -56,6 +56,8 @@ a{
 .wrong-area{
     font-size: 26px;
     font-weight: bold;
+    color: red;
+    text-shadow: 0 0 2px #000;
 }
 
 .wrong-area-paragraph{
@@ -103,4 +105,14 @@ a{
     width: 100vw;
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
+}
+
+.keyboardArea{
+    width: 50%;
+}
+.virtual-letter{
+    cursor: pointer;
+    font-size: 20px;
+    width: 50px;
+    height: 50px;
 }
