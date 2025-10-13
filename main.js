@@ -151,7 +151,6 @@ function handleKey(key) {
 
       return;
     }
-    console.log(currentState);
 
     //   WRONG LETTER, -1 HEART, IMAGE
     if (!wrongLetters.includes(key)) {
@@ -178,7 +177,7 @@ function makeKeyboard() {
     virtualLetter.textContent = letter.toUpperCase();
 
     virtualLetter.addEventListener("click", (event) => {
-      handleKey(event.target.textContent.toLowerCase());
+      handleKey(letter);
     });
 
     keyboardArea.appendChild(virtualLetter);
@@ -186,6 +185,7 @@ function makeKeyboard() {
 }
 
 function updateStatus() {
+  console.log(currentState);
   guessLettersArea.innerHTML = currentState
     .map((letter) => `<span class="letter">${letter.toUpperCase()}</span>`)
     .join("");
@@ -195,18 +195,20 @@ function resetValues() {
   livesCount = 8;
   wordToGuess = randomWord(words);
   wordToGuessLetters = wordToGuess.split("");
-  console.log(wordToGuess);
   wrongLetters = [];
   currentState = [];
 
-  for (const letter of wordToGuessLetters) {
-    if (letter === " ") {
-      currentState.push(" ");
-    } else {
-      currentState.push("___");
-    }
-  }
-  console.log(currentState);
+  // for (const letter of wordToGuessLetters) {
+  //   if (letter === " ") {
+  //     currentState.push(" ");
+  //   } else {
+  //     currentState.push("___");
+  //   }
+  // }
+
+  currentState = wordToGuessLetters.map((letter) =>
+    letter === " " ? " " : "___"
+  );
 
   hangmanArea.textContent = "";
   hangmanImage.setAttribute("src", "");
