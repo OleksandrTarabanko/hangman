@@ -49,6 +49,32 @@ const words = [
   "wizard",
   "robot",
   "spaceship",
+  "follow your dreams",
+  "make it happen",
+  "trust the process",
+  "enjoy the moment",
+  "learn from mistakes",
+  "keep moving forward",
+  "believe in yourself",
+  "never give up",
+  "stay strong always",
+  "spread positive vibes",
+  "listen before speaking",
+  "take a break",
+  "choose your path",
+  "create something new",
+  "live and learn",
+  "embrace the change",
+  "focus on growth",
+  "help each other",
+  "love your life",
+  "work with passion",
+  "think before acting",
+  "smile every day",
+  "dream big always",
+  "forgive and forget",
+  "practice makes perfect",
+  "always be kind",
 ];
 const alphabet = "abcdefghijklmnopqrstuvwxyz";
 const livesMarkup = `<span>
@@ -88,15 +114,6 @@ function randomWord(wordsArr) {
   return wordsArr[Math.floor(Math.random() * wordsArr.length)];
 }
 
-function makeUnderlines(letters) {
-  const guessLettersMarkup = letters
-    .map(
-      (letter) => `<span data-letter="${letter}" class="underline">___</span>`
-    )
-    .join("");
-  guessLettersArea.innerHTML = guessLettersMarkup;
-}
-
 function showHearts(hearts) {
   livesArea.innerHTML = livesMarkup.repeat(hearts);
 }
@@ -113,8 +130,45 @@ function showWrongLetters(wrongLettersArr) {
   wrongLettersArea.innerHTML = wrongLettersArr
     .map((letter) => `<span>${letter.toUpperCase()}</span>`)
     .join("");
+}
 
-  console.log(wrongLettersArr);
+function handleKey(key) {
+  if (livesCount > 0) {
+    if (wordToGuessLetters.includes(key)) {
+      for (const index in wordToGuessLetters) {
+        if (wordToGuessLetters[index] === key) {
+          currentState[index] = key;
+        }
+      }
+
+      updateStatus();
+
+      if (!currentState.includes("___")) {
+        modalBackdrop.classList.remove("hidden");
+        modalWin.classList.remove("hidden");
+        document.onkeydown = null;
+      }
+
+      return;
+    }
+    console.log(currentState);
+
+    //   WRONG LETTER, -1 HEART, IMAGE
+    if (!wrongLetters.includes(key)) {
+      wrongLetters.push(key);
+      showWrongLetters(wrongLetters);
+      livesCount--;
+      showHearts(livesCount);
+      showHangmanImage(livesCount);
+    }
+
+    // LOST MODAL
+    if (livesCount === 0) {
+      modalBackdrop.classList.remove("hidden");
+      modalLose.classList.remove("hidden");
+      return;
+    }
+  }
 }
 
 function makeKeyboard() {
@@ -131,86 +185,67 @@ function makeKeyboard() {
   }
 }
 
-function handleKey(key) {
-  if (livesCount > 0) {
-    for (const letter of wordToGuessLetters) {
-      //   RIGHT LETTER AND WON MODAL
-      if (key === letter) {
-        document
-          .querySelectorAll(`[data-letter="${letter}"]`)
-          .forEach((element) => (element.textContent = letter.toUpperCase()));
-
-        rightLetters = [...guessLettersArea.childNodes];
-
-        if (rightLetters.every((el) => el.textContent !== "___")) {
-          modalBackdrop.classList.remove("hidden");
-          modalWin.classList.remove("hidden");
-          document.onkeydown = null;
-        }
-        return;
-      }
-    }
-
-    //   WRONG LETTER AND -1 HEART
-    if (!wrongLetters.includes(key)) {
-      wrongLetters.push(key);
-      showWrongLetters(wrongLetters);
-      livesCount--;
-      showHearts(livesCount);
-    }
-
-    showHangmanImage(livesCount);
-
-    // LOST MODAL
-    if (livesCount === 0) {
-      modalBackdrop.classList.remove("hidden");
-      modalLose.classList.remove("hidden");
-      return;
-    }
-  }
+function updateStatus() {
+  guessLettersArea.innerHTML = currentState
+    .map((letter) => `<span class="letter">${letter.toUpperCase()}</span>`)
+    .join("");
 }
 
-function reset() {
+function resetValues() {
   livesCount = 8;
   wordToGuess = randomWord(words);
   wordToGuessLetters = wordToGuess.split("");
+  console.log(wordToGuess);
   wrongLetters = [];
-  rightLetters = [];
+  currentState = [];
+
+  for (const letter of wordToGuessLetters) {
+    if (letter === " ") {
+      currentState.push(" ");
+    } else {
+      currentState.push("___");
+    }
+  }
+  console.log(currentState);
 
   hangmanArea.textContent = "";
   hangmanImage.setAttribute("src", "");
   wrongLettersArea.innerHTML = "";
+  guessLettersArea.innerHTML = "";
+  keyboardArea.innerHTML = "";
 
   modalBackdrop.classList.add("hidden");
   modalLose.classList.add("hidden");
   modalWin.classList.add("hidden");
 
-  makeUnderlines(wordToGuessLetters);
-  showHearts(livesCount);
-
   document.onkeydown = (e) => {
-    handleKey(e.key);
+    const key = e.key.toLowerCase();
+    if (alphabet.includes(key)) {
+      handleKey(key);
+    }
   };
 }
 
-let livesCount = 8;
-let wordToGuess = randomWord(words);
-let wordToGuessLetters = wordToGuess.split("");
-let wrongLetters = [];
-let rightLetters = [];
+let livesCount;
+let wordToGuess;
+let wordToGuessLetters;
+let wrongLetters;
+let currentState;
+let rightLetters;
 
-makeKeyboard();
-makeUnderlines(wordToGuessLetters);
-showHearts(livesCount);
+function startGame() {
+  resetValues();
+  updateStatus();
+  makeKeyboard();
+  showHearts(livesCount);
+}
 
-document.onkeydown = (e) => {
-  handleKey(e.key);
-};
+startGame();
 
 //   RESTART
 lostRestartBtn.onclick = () => {
-  reset();
+  startGame();
 };
 wonRestartBtn.onclick = () => {
-  reset();
+  startGame();
 };

@@ -42,11 +42,11 @@ a{
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
-    max-width: 70%
 }
 
-.underline{
-    font-size: 36px;
+.letter{
+    width: 40px;
+    font-size: 28px;
 }
 
 .hangman-area{
