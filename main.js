@@ -1,81 +1,5 @@
-const words = [
-  "apple",
-  "banana",
-  "watermelon",
-  "strawberry",
-  "pineapple",
-  "grapefruit",
-  "cherry",
-  "mango",
-  "blueberry",
-  "kiwi",
-  "computer",
-  "javascript",
-  "keyboard",
-  "monitor",
-  "internet",
-  "software",
-  "programming",
-  "developer",
-  "variable",
-  "function",
-  "mountain",
-  "ocean",
-  "island",
-  "volcano",
-  "desert",
-  "forest",
-  "rainbow",
-  "storm",
-  "galaxy",
-  "planet",
-  "elephant",
-  "giraffe",
-  "kangaroo",
-  "tiger",
-  "dolphin",
-  "penguin",
-  "rabbit",
-  "squirrel",
-  "butterfly",
-  "dragon",
-  "mystery",
-  "adventure",
-  "puzzle",
-  "treasure",
-  "journey",
-  "fantasy",
-  "castle",
-  "wizard",
-  "robot",
-  "spaceship",
-  "follow your dreams",
-  "make it happen",
-  "trust the process",
-  "enjoy the moment",
-  "learn from mistakes",
-  "keep moving forward",
-  "believe in yourself",
-  "never give up",
-  "stay strong always",
-  "spread positive vibes",
-  "listen before speaking",
-  "take a break",
-  "choose your path",
-  "create something new",
-  "live and learn",
-  "embrace the change",
-  "focus on growth",
-  "help each other",
-  "love your life",
-  "work with passion",
-  "think before acting",
-  "smile every day",
-  "dream big always",
-  "forgive and forget",
-  "practice makes perfect",
-  "always be kind",
-];
+import { randomWord } from "./randomWord.js";
+
 const alphabet = "abcdefghijklmnopqrstuvwxyz";
 const livesMarkup = `<span>
     <svg
@@ -96,8 +20,6 @@ const livesMarkup = `<span>
     </g>
   </svg>
   </span>`;
-const request =
-  "https://random-words-api.kushcreates.com/api?language=en&category=countries&type=lowercase&words=1";
 
 const livesArea = document.querySelector(".lives-area");
 const guessLettersArea = document.querySelector(".guess-letters-area");
@@ -108,21 +30,10 @@ const keyboardArea = document.querySelector(".keyboardArea");
 
 const modalBackdrop = document.querySelector(".modalBackdrop");
 const modalLose = document.querySelector("[data-status=lost]");
+const modalLoseAnswer = document.querySelector("[data-name=gameAnswer]");
 const modalWin = document.querySelector("[data-status=won]");
 const lostRestartBtn = document.querySelector("[data-name=lostRestartBtn]");
 const wonRestartBtn = document.querySelector("[data-name=wonRestartBtn]");
-
-async function randomWord() {
-  // return wordsArr[Math.floor(Math.random() * wordsArr.length)];
-  const response = await fetch(request);
-  const data = await response.json();
-
-  try {
-    return data[0].word;
-  } catch (error) {
-    console.error("Promise was rejected with:", error);
-  }
-}
 
 function showHearts(hearts) {
   livesArea.innerHTML = livesMarkup.repeat(hearts);
@@ -218,6 +129,7 @@ async function resetValues() {
   keyboardArea.innerHTML = "";
 
   modalBackdrop.classList.add("hidden");
+  modalLoseAnswer.textContent = `Answer: ${wordToGuess.toUpperCase()}`;
   modalLose.classList.add("hidden");
   modalWin.classList.add("hidden");
 
