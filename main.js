@@ -96,6 +96,8 @@ const livesMarkup = `<span>
     </g>
   </svg>
   </span>`;
+const request =
+  "https://random-words-api.kushcreates.com/api?language=en&category=countries&type=lowercase&words=1";
 
 const livesArea = document.querySelector(".lives-area");
 const guessLettersArea = document.querySelector(".guess-letters-area");
@@ -110,8 +112,16 @@ const modalWin = document.querySelector("[data-status=won]");
 const lostRestartBtn = document.querySelector("[data-name=lostRestartBtn]");
 const wonRestartBtn = document.querySelector("[data-name=wonRestartBtn]");
 
-function randomWord(wordsArr) {
-  return wordsArr[Math.floor(Math.random() * wordsArr.length)];
+async function randomWord() {
+  // return wordsArr[Math.floor(Math.random() * wordsArr.length)];
+  const response = await fetch(request);
+  const data = await response.json();
+
+  try {
+    return data[0].word;
+  } catch (error) {
+    console.error("Promise was rejected with:", error);
+  }
 }
 
 function showHearts(hearts) {
@@ -185,26 +195,17 @@ function makeKeyboard() {
 }
 
 function updateStatus() {
-  console.log(currentState);
   guessLettersArea.innerHTML = currentState
     .map((letter) => `<span class="letter">${letter.toUpperCase()}</span>`)
     .join("");
 }
 
-function resetValues() {
+async function resetValues() {
   livesCount = 8;
-  wordToGuess = randomWord(words);
+  wordToGuess = await randomWord();
   wordToGuessLetters = wordToGuess.split("");
   wrongLetters = [];
   currentState = [];
-
-  // for (const letter of wordToGuessLetters) {
-  //   if (letter === " ") {
-  //     currentState.push(" ");
-  //   } else {
-  //     currentState.push("___");
-  //   }
-  // }
 
   currentState = wordToGuessLetters.map((letter) =>
     letter === " " ? " " : "___"
@@ -235,8 +236,8 @@ let wrongLetters;
 let currentState;
 let rightLetters;
 
-function startGame() {
-  resetValues();
+async function startGame() {
+  await resetValues();
   updateStatus();
   makeKeyboard();
   showHearts(livesCount);
